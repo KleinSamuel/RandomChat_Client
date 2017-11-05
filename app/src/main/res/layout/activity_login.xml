@@ -1,77 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.samuel.klein.randomchat.account.LoginActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Username"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="160dp"
-        android:translationX="84dp"
-        android:translationY="160dp"
-        />
-
-    <EditText
-        android:id="@+id/username_input"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="179dp"
-        android:translationX="84dp"
-        android:translationY="179dp"
-    />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Password"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="222dp"
-        android:translationX="84dp"
-        android:translationY="222dp"
-    />
-
     <EditText
         android:id="@+id/password_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/passwordTextView"
+        android:layout_below="@+id/passwordTextView"
         android:ems="10"
         android:inputType="textPersonName"
+        android:password="true"
+        android:text="password"
         tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="239dp"
-        android:translationX="84dp"
-        android:translationY="239dp"
-    />
+        tools:layout_editor_absoluteY="170dp" />
 
     <Button
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="282dp"
-        android:translationX="84dp"
-        android:translationY="282dp"
-    />
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/password_input"
+        android:layout_marginEnd="79dp"
+        android:elevation="0dp"
+        android:text="Log In"
+        tools:layout_editor_absoluteX="212dp"
+        tools:layout_editor_absoluteY="216dp" />
 
-    <Button
-        android:id="@+id/switch_button"
+    <EditText
+        android:id="@+id/username_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Switch"
-        tools:layout_editor_absoluteX="211dp"
-        tools:layout_editor_absoluteY="282dp"
-        android:translationX="211dp"
-        android:translationY="282dp"
-    />
+        android:layout_alignEnd="@+id/login_button"
+        android:layout_below="@+id/usernameTextView"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Sam"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="105dp" />
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/usernameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/passwordTextView"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="69dp"
+        android:text="Username"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="86dp" />
+
+    <TextView
+        android:id="@+id/passwordTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/username_input"
+        android:layout_below="@+id/username_input"
+        android:text="Password"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="151dp" />
+
+</RelativeLayout>
