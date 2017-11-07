@@ -7,5 +7,6 @@ package com.samuel.klein.randomchat.account;
 public class Constants {
 
     public static final String CHAT_SERVER_URL = "http://192.168.178.29:9999";
+    public static final String STORAGE_FILENAME = "storage.txt";
 
 }
