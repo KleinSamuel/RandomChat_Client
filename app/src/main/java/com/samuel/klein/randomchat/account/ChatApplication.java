@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-import com.samuel.klein.randomchat.chat.User;
 import com.samuel.klein.randomchat.debug.Debug;
 
 import java.net.URISyntaxException;

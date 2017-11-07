@@ -8,12 +8,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.samuel.klein.randomchat.R;
 import com.samuel.klein.randomchat.account.ChatApplication;
 import com.samuel.klein.randomchat.account.LoginActivity;
-import com.samuel.klein.randomchat.chat.MainActivity;
+import com.samuel.klein.randomchat.debug.Debug;
 
 public class MenuFragment extends Fragment {
 
@@ -24,7 +25,9 @@ public class MenuFragment extends Fragment {
     private ChatApplication app;
     private String mUsername;
 
+    /* ui elements */
     private TextView usernameView;
+    private Button randomChatButton;
 
     public MenuFragment(){
         super();
@@ -58,7 +61,10 @@ public class MenuFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        usernameView = (TextView) view.findViewById(R.id.usernameTextView);
+        usernameView = (TextView) view.findViewById(R.id.username_menu);
+        randomChatButton = (Button) view.findViewById(R.id.enter_random_chat_button_menu);
+
+        randomChatButton.setOnClickListener(randomChatButtonListener);
 
         updateContent();
     }
@@ -81,13 +87,19 @@ public class MenuFragment extends Fragment {
         usernameView.setText(mUsername);
     }
 
-    /**
-     * Open Login activity to get username
-     */
-    public void signIn() {
+    /* Open Login activity to get username */
+    private void signIn() {
         mUsername = null;
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivityForResult(intent, REQUEST_LOGIN);
     }
+
+    View.OnClickListener randomChatButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Debug.print("Entering random chatroom..");
+            mainActivity.switchActivity();
+        }
+    };
 
 }

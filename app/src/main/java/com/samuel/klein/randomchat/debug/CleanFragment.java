@@ -1,4 +1,4 @@
-package com.samuel.klein.randomchat.main;
+package com.samuel.klein.randomchat.debug;
 
 import android.content.Context;
 import android.content.Intent;

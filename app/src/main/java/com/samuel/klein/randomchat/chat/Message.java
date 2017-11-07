@@ -1,5 +1,7 @@
 package com.samuel.klein.randomchat.chat;
 
+import com.samuel.klein.randomchat.account.User;
+
 /**
  * Created by sam on 07.11.17.
  */

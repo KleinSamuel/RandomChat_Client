@@ -1,4 +1,4 @@
-package com.samuel.klein.randomchat.chat;
+package com.samuel.klein.randomchat.account;
 
 /**
  * Created by sam on 07.11.17.

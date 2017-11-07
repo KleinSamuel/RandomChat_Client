@@ -1,7 +1,8 @@
-package com.samuel.klein.randomchat.chat;
+package com.samuel.klein.randomchat.main;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import com.samuel.klein.randomchat.R;
 import com.samuel.klein.randomchat.account.ChatApplication;
 import com.samuel.klein.randomchat.account.Constants;
+import com.samuel.klein.randomchat.chat.ChatActivity;
 import com.samuel.klein.randomchat.debug.Debug;
 
 import java.io.BufferedReader;
@@ -104,5 +106,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void storeUsername(String username){
         createStorageFile(username);
+    }
+
+    public void switchActivity(){
+
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("extra", "extratext");
+        startActivity(intent);
+
     }
 }

@@ -1,12 +1,10 @@
-package com.samuel.klein.randomchat.main;
+package com.samuel.klein.randomchat.chat;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,7 +18,6 @@ import android.widget.EditText;
 
 import com.samuel.klein.randomchat.R;
 import com.samuel.klein.randomchat.account.ChatApplication;
-import com.samuel.klein.randomchat.account.LoginActivity;
 import com.samuel.klein.randomchat.chat.Message;
 import com.samuel.klein.randomchat.chat.MessageAdapter;
 import com.samuel.klein.randomchat.debug.Debug;
