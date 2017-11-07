@@ -1,17 +1,21 @@
 package com.samuel.klein.randomchat.main;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 import com.samuel.klein.randomchat.R;
 import com.samuel.klein.randomchat.account.ChatApplication;
 import com.samuel.klein.randomchat.account.Constants;
 import com.samuel.klein.randomchat.chat.ChatActivity;
+import com.samuel.klein.randomchat.chat.ChatRoomListActivity;
 import com.samuel.klein.randomchat.debug.Debug;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -19,10 +23,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private ChatApplication app;
+    private Socket mSocket;
     private String mUsername;
 
     @Override
@@ -30,8 +36,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         app = (ChatApplication) getApplication();
+        mSocket = app.getSocket();
 
         mUsername = fetchUsername();
+
+        mSocket.on(Socket.EVENT_CONNECT, onConnectListener);
+        mSocket.on(Socket.EVENT_DISCONNECT, onDisconnectListener);
+        mSocket.on(Socket.EVENT_CONNECT_ERROR, onErrorListener);
+
+        mSocket.on("assignRoom", assignRoomListener);
+
+        mSocket.connect();
 
         setContentView(R.layout.activity_main);
     }
@@ -79,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
+        /*new AlertDialog.Builder(this)
                 .setMessage("Are you sure you want to exit?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
@@ -93,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                         Debug.print("No Pressed!");
                     }
                 })
-                .show();
+                .show();*/
     }
 
     public String getUsername(){
@@ -108,11 +123,64 @@ public class MainActivity extends AppCompatActivity {
         createStorageFile(username);
     }
 
-    public void switchActivity(){
-
-        Intent intent = new Intent(this, ChatActivity.class);
-        intent.putExtra("extra", "extratext");
-        startActivity(intent);
-
+    public void requestChatroom(String roomName){
+        try {
+            JSONObject object = new JSONObject();
+            object.put("roomName", roomName);
+            mSocket.emit("joinRoom", object);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
+
+    public void requestRandomChatroom(){
+        mSocket.emit("joinRandomRoom");
+    }
+
+    public void joinChatroom(String roomName){
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("roomName", roomName);
+        startActivity(intent);
+    }
+
+    public void openRoomList(ArrayList<String> list){
+        Intent intent = new Intent(this, ChatRoomListActivity.class);
+        intent.putExtra("roomList", list);
+        startActivity(intent);
+    }
+
+    Emitter.Listener onConnectListener = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Debug.print("CONNECTED!");
+        }
+    };
+
+    Emitter.Listener onDisconnectListener = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Debug.print("DISCONNECTED!");
+        }
+    };
+
+    Emitter.Listener onErrorListener = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Debug.print("ERROR!");
+        }
+    };
+
+    Emitter.Listener assignRoomListener = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            try {
+                JSONObject obj = (JSONObject) args[0];
+                String roomName = obj.getString("roomName");
+                Debug.print("Server assigned chatroom to me ["+roomName+"]");
+                joinChatroom(roomName);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 }
