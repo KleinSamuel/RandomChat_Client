@@ -16,11 +16,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 import com.samuel.klein.randomchat.R;
 import com.samuel.klein.randomchat.account.ChatApplication;
-import com.samuel.klein.randomchat.chat.Message;
-import com.samuel.klein.randomchat.chat.MessageAdapter;
+import com.samuel.klein.randomchat.account.User;
 import com.samuel.klein.randomchat.debug.Debug;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,8 @@ public class ChatFragment extends Fragment {
     private static final String TAG = "ChatFragment";
 
     private ChatApplication app;
+    private ChatActivity chatActivity;
+    private Socket mSocket;
 
     private EditText messageInput;
     private Button sendButton;
@@ -63,7 +69,11 @@ public class ChatFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        app = (ChatApplication) getActivity().getApplication();
+        chatActivity = (ChatActivity) getActivity();
+        app = (ChatApplication) chatActivity.getApplication();
+        mSocket = app.getSocket();
+
+        addListener();
     }
 
     private View mView;
@@ -109,9 +119,23 @@ public class ChatFragment extends Fragment {
         sendButton.setOnClickListener(sendButtonListener);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        removeListener();
+    }
+
     private void addMessage(Message message){
         messageList.add(message);
-        mAdapter.notifyItemInserted(messageList.size() - 1);
+        mAdapter.notifyItemChanged(messageList.size() - 1);
+    }
+
+    private void addListener(){
+        mSocket.on("msg", receiveMessageListener);
+    }
+
+    private void removeListener(){
+        mSocket.off("msg", receiveMessageListener);
     }
 
     View.OnClickListener sendButtonListener = new View.OnClickListener() {
@@ -124,14 +148,36 @@ public class ChatFragment extends Fragment {
                 return;
             }
 
-            Debug.print("Entered Message: "+messageText);
-
             Message message = new Message(app.getUser(), messageText, 1);
             addMessage(message);
+            chatActivity.sendMessage(messageText);
 
             messageInput.setText("");
             scrollToBottom();
 
+        }
+    };
+
+    Emitter.Listener receiveMessageListener = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            chatActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject obj = (JSONObject) args[0];
+                        String message = obj.getString("message");
+                        String sender = obj.getString("userName");
+
+                        Debug.print("Received message from ["+sender+"]:\t"+message);
+
+                        Message msg = new Message(new User(sender), message, 1);
+                        addMessage(msg);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     };
 
