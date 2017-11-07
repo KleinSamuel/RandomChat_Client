@@ -34,9 +34,6 @@ public class LoginActivity extends AppCompatActivity {
 
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
-
-        mSocket.connect();
-
         usernameInput = (EditText) findViewById(R.id.username_input);
         passwordInput = (EditText) findViewById(R.id.password_input);
 
@@ -44,8 +41,16 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(loginListener);
 
-        mSocket.on("loginResponse", onLogin);
+        mSocket.connect();
 
+        mSocket.on("loginResponse", onLogin);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSocket.disconnect();
+        mSocket.off("loginResponse", onLogin);
     }
 
     /**
