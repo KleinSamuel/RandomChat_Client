@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.samuel.klein.randomchat.chat.User;
 import com.samuel.klein.randomchat.debug.Debug;
 
 import java.net.URISyntaxException;
@@ -15,6 +16,7 @@ import java.net.URISyntaxException;
 public class ChatApplication extends Application {
 
     private Socket mSocket;
+    private User mUser;
 
     @Override
     public void onCreate() {
@@ -39,4 +41,11 @@ public class ChatApplication extends Application {
         return mSocket;
     }
 
+    public User getUser() {
+        return mUser;
+    }
+
+    public void setUser(String name) {
+        this.mUser = new User(name);
+    }
 }
