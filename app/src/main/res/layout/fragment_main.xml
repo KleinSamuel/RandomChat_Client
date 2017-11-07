@@ -1,18 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="com.samuel.klein.randomchat.main.MainFragment">
+    tools:context="com.samuel.klein.randomchat.main.ChatFragment">
 
-    <TextView
-        android:id="@+id/textview"
+    <EditText
+        android:id="@+id/message_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:width="300dp"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/send_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/message_input"
+        android:text="Send" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/messages"
         android:layout_width="match_parent"
-        android:layout_height="41dp"
-        android:gravity="center"
-        android:text="Hello" />
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:layout_above="@+id/message_input"
+        android:layout_alignParentStart="true">
 
-</android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.RecyclerView>
+
+
+</RelativeLayout>

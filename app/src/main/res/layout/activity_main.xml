@@ -10,7 +10,7 @@
 
     <fragment
         android:id="@+id/main_fragment"
-        class="com.samuel.klein.randomchat.main.MainFragment"
+        class="com.samuel.klein.randomchat.main.MenuFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
