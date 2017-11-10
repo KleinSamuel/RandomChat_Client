@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
@@ -39,7 +40,11 @@ public class MenuFragment extends Fragment {
     private TextView usernameView;
     private Button randomChatButton;
     private Button roomListButton;
+    private Button createChatButton;
     private Button privateChatButton;
+
+    private Button accountSettingsButton;
+    private Button globalSettingsButton;
 
     public MenuFragment(){
         super();
@@ -78,12 +83,20 @@ public class MenuFragment extends Fragment {
 
         usernameView = (TextView) view.findViewById(R.id.username_menu);
         randomChatButton = (Button) view.findViewById(R.id.enter_random_chat_button_menu);
-        privateChatButton = (Button) view.findViewById(R.id.enter_private_chat_button_menu);
         roomListButton = (Button) view.findViewById(R.id.public_chatrooms_button_menu);
+        createChatButton = (Button) view.findViewById(R.id.create_chatroom_button_menu);
+        privateChatButton = (Button) view.findViewById(R.id.enter_private_chat_button_menu);
+
+        accountSettingsButton = (Button) view.findViewById(R.id.settings_account_button_menu);
+        globalSettingsButton = (Button) view.findViewById(R.id.settings_global_button_menu);
 
         randomChatButton.setOnClickListener(randomChatButtonListener);
-        privateChatButton.setOnClickListener(privateChatButtonListener);
         roomListButton.setOnClickListener(roomListButtonListener);
+        createChatButton.setOnClickListener(createChatButtonListener);
+        privateChatButton.setOnClickListener(privateChatButtonListener);
+
+        accountSettingsButton.setOnClickListener(accountSettingsButtonListener);
+        globalSettingsButton.setOnClickListener(globalSettingsButtonListener);
 
         updateContent();
     }
@@ -123,16 +136,14 @@ public class MenuFragment extends Fragment {
             try {
                 JSONArray array = (JSONArray) args[0];
                 ArrayList<String> roomList = new ArrayList<>();
-
                 for(int i = 0; i < array.length(); i++){
                     JSONObject obj = array.getJSONObject(i);
                     String roomName = obj.getString("name");
                     String limit = obj.getString("limit");
-                    roomList.add(roomName+"_"+limit);
+                    String load = obj.getString("load");
+                    roomList.add(roomName+"_"+limit+"_"+load);
                 }
-
                 mainActivity.openRoomList(roomList);
-
             } catch (JSONException e){
                 e.printStackTrace();
             }
@@ -146,7 +157,6 @@ public class MenuFragment extends Fragment {
             mainActivity.requestRandomChatroom();
         }
     };
-
     View.OnClickListener roomListButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -154,11 +164,29 @@ public class MenuFragment extends Fragment {
             requestRoomList();
         }
     };
-
+    View.OnClickListener createChatButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getContext(), "Coming soon..", Toast.LENGTH_SHORT).show();
+        }
+    };
     View.OnClickListener privateChatButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Debug.print("Requesting connection..");
+            Toast.makeText(getContext(), "Coming soon..", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    View.OnClickListener accountSettingsButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getContext(), "Coming soon..", Toast.LENGTH_SHORT).show();
+        }
+    };
+    View.OnClickListener globalSettingsButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getContext(), "Coming soon..", Toast.LENGTH_SHORT).show();
         }
     };
 
