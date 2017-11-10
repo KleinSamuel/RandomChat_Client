@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
-        android:text="SURDITAS"
+        android:text="NAME"
         android:textAlignment="center"
         android:textColor="@android:color/holo_blue_light"
         android:textSize="28sp"
@@ -22,6 +22,29 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="100dp">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
+
+            <TextView
+                android:id="@+id/textViewLevel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:text="Your Level:" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="coming soon"
+                android:textSize="24dp" />
+        </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
@@ -42,8 +65,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textSize="24dp"
-                android:text="30012" />
+                android:text="coming soon"
+                android:textSize="24dp" />
 
         </TableRow>
 
