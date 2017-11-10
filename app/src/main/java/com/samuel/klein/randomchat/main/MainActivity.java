@@ -14,6 +14,7 @@ import com.samuel.klein.randomchat.chat.ChatActivity;
 import com.samuel.klein.randomchat.chat.ChatRoomListActivity;
 import com.samuel.klein.randomchat.debug.Debug;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             JSONObject object = new JSONObject();
             object.put("roomName", roomName);
+            object.put("userName", mUsername);
             mSocket.emit("joinRoom", object);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -134,12 +136,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void requestRandomChatroom(){
-        mSocket.emit("joinRandomRoom");
+        try {
+            JSONObject object = new JSONObject();
+            object.put("userName", mUsername);
+            mSocket.emit("joinRandomRoom", object);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void joinChatroom(String roomName){
+    public void joinChatroom(String roomName, ArrayList<String> userList, String limit){
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra("roomName", roomName);
+        intent.putStringArrayListExtra("userlist", userList);
+        intent.putExtra("limit", limit);
         startActivity(intent);
     }
 
@@ -176,8 +186,21 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject obj = (JSONObject) args[0];
                 String roomName = obj.getString("roomName");
+                String limit = obj.getString("limit");
+                JSONArray array = obj.getJSONArray("userlist");
+
+                ArrayList<String> userList = new ArrayList<>();
+
+                for(int i = 0; i < array.length(); i++){
+                    JSONObject tmp = (JSONObject) array.get(i);
+                    String socketID = tmp.getString("socketID");
+                    String userName = tmp.getString("name");
+                    userList.add(socketID+"_"+userName);
+                }
+
                 Debug.print("Server assigned chatroom to me ["+roomName+"]");
-                joinChatroom(roomName);
+                joinChatroom(roomName, userList, limit);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
