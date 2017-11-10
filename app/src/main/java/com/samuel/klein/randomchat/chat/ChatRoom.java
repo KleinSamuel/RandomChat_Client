@@ -12,11 +12,13 @@ public class ChatRoom {
 
     private String name;
     private int limit;
+    private int load;
     private ArrayList<User> userlist;
 
-    public ChatRoom(String name, int limit) {
+    public ChatRoom(String name, int limit, int load) {
         this.name = name;
         this.limit = limit;
+        this.load = load;
         this.userlist = new ArrayList<>();
     }
 
@@ -24,23 +26,15 @@ public class ChatRoom {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getLimit() {
         return limit;
     }
 
-    public void setLimit(int limit) {
-        this.limit = limit;
+    public int getLoad() {
+        return load;
     }
 
     public ArrayList<User> getUserlist() {
         return userlist;
-    }
-
-    public void setUserlist(ArrayList<User> userlist) {
-        this.userlist = userlist;
     }
 }
