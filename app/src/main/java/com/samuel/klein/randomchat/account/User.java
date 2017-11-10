@@ -6,9 +6,11 @@ package com.samuel.klein.randomchat.account;
 
 public class User {
 
+    private String socketID;
     private String name;
 
-    public User(String name) {
+    public User(String socketID, String name) {
+        this.socketID = socketID;
         this.name = name;
     }
 
@@ -18,5 +20,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSocketID() {
+        return socketID;
+    }
+
+    public void setSocketID(String socketID) {
+        this.socketID = socketID;
     }
 }

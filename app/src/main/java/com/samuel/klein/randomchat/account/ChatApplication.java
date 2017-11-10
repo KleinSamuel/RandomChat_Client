@@ -6,6 +6,9 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.samuel.klein.randomchat.debug.Debug;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 
 /**
@@ -36,6 +39,17 @@ public class ChatApplication extends Application {
         }
     }
 
+    public void requestChatroom(String roomName){
+        try {
+            JSONObject object = new JSONObject();
+            object.put("roomName", roomName);
+            object.put("userName", mUser.getName());
+            mSocket.emit("joinRoom", object);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Socket getSocket(){
         return mSocket;
     }
@@ -45,6 +59,6 @@ public class ChatApplication extends Application {
     }
 
     public void setUser(String name) {
-        this.mUser = new User(name);
+        this.mUser = new User("", name);
     }
 }
