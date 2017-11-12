@@ -34,7 +34,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_vertical|right"
-                android:text="Your Level:" />
+                android:text="@string/your_level" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -57,7 +57,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_vertical|right"
-                android:text="Your Coins:" />
+                android:text="@string/your_coins" />
 
             <TextView
                 android:id="@+id/coins_menu"
@@ -92,28 +92,28 @@
             android:id="@+id/enter_random_chat_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enter random chatroom" />
+            android:text="@string/enter_random_chatroom" />
 
         <Button
             android:theme="@style/AppTheme.Button"
             android:id="@+id/public_chatrooms_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="public chatrooms" />
+            android:text="@string/enter_public_chatroom" />
 
         <Button
             android:theme="@style/AppTheme.Button"
             android:id="@+id/create_chatroom_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create Chatroom" />
+            android:text="@string/create_chatroom" />
 
         <Button
             android:theme="@style/AppTheme.Button"
             android:id="@+id/enter_private_chat_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Private Chat" />
+            android:text="@string/private_chat" />
 
     </LinearLayout>
 
@@ -130,21 +130,21 @@
             android:id="@+id/textViewSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Settings" />
+            android:text="@string/settings" />
 
         <Button
             android:theme="@style/AppTheme.Button"
             android:id="@+id/settings_account_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Account" />
+            android:text="@string/account_settings" />
 
         <Button
             android:theme="@style/AppTheme.Button"
             android:id="@+id/settings_global_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Global" />
+            android:text="@string/global_settings" />
 
     </LinearLayout>
 
