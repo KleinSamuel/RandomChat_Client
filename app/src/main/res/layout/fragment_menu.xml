@@ -88,24 +88,28 @@
             android:text="Chat" />
 
         <Button
+            android:theme="@style/AppTheme.Button"
             android:id="@+id/enter_random_chat_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Enter random chatroom" />
 
         <Button
+            android:theme="@style/AppTheme.Button"
             android:id="@+id/public_chatrooms_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="public chatrooms" />
 
         <Button
+            android:theme="@style/AppTheme.Button"
             android:id="@+id/create_chatroom_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Create Chatroom" />
 
         <Button
+            android:theme="@style/AppTheme.Button"
             android:id="@+id/enter_private_chat_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -129,16 +133,18 @@
             android:text="Settings" />
 
         <Button
+            android:theme="@style/AppTheme.Button"
             android:id="@+id/settings_account_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Account" />
 
         <Button
+            android:theme="@style/AppTheme.Button"
             android:id="@+id/settings_global_button_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="GLOBAL" />
+            android:text="Global" />
 
     </LinearLayout>
 
