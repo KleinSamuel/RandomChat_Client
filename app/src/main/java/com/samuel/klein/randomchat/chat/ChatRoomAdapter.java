@@ -35,6 +35,10 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         mSocket = app.getSocket();
     }
 
+    public void updateData(List<ChatRoom> mRooms){
+        this.mRooms = mRooms;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_chatroom_list_entry, parent, false);

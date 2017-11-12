@@ -20,8 +20,11 @@ import com.samuel.klein.randomchat.R;
 import com.samuel.klein.randomchat.account.ChatApplication;
 import com.samuel.klein.randomchat.debug.Debug;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class ChatRoomListFragment extends Fragment {
 
@@ -30,7 +33,7 @@ public class ChatRoomListFragment extends Fragment {
     private Socket mSocket;
 
     private RecyclerView chatroomListView;
-    private RecyclerView.Adapter mAdapter;
+    private ChatRoomAdapter mAdapter;
 
     public ChatRoomListFragment(){
         super();
@@ -43,6 +46,8 @@ public class ChatRoomListFragment extends Fragment {
         chatRoomListActivity = (ChatRoomListActivity) getActivity();
         app = (ChatApplication) chatRoomListActivity.getApplication();
         mSocket = app.getSocket();
+
+        mSocket.on("receiveRoomListUpdate", roomListUpdateListener);
 
         mAdapter = new ChatRoomAdapter(context, chatRoomListActivity.getRoomList(), this);
     }
@@ -70,6 +75,39 @@ public class ChatRoomListFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    Emitter.Listener roomListUpdateListener = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            try {
+                JSONArray array = (JSONArray) args[0];
+                ArrayList<String> roomList = new ArrayList<>();
+                for(int i = 0; i < array.length(); i++){
+                    JSONObject obj = array.getJSONObject(i);
+                    String roomName = obj.getString("name");
+                    String limit = obj.getString("limit");
+                    String load = obj.getString("load");
+                    roomList.add(roomName+"_"+limit+"_"+load);
+                }
+
+                chatRoomListActivity.refreshRoomlist(roomList);
+                updateAdapter();
+
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private void updateAdapter(){
+        chatRoomListActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.updateData(chatRoomListActivity.getRoomList());
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
 }

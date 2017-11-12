@@ -13,10 +13,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
 import com.samuel.klein.randomchat.R;
 import com.samuel.klein.randomchat.account.ChatApplication;
 import com.samuel.klein.randomchat.debug.Debug;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,25 +33,17 @@ public class ChatRoomListActivity extends AppCompatActivity {
 
     private ArrayList<ChatRoom> roomList;
 
-    public ChatRoomListActivity() {
-        roomList = new ArrayList<>();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        roomList = new ArrayList<>();
 
         Intent intent = getIntent();
 
         ArrayList<String> tmp = intent.getStringArrayListExtra("roomList");
 
-        for(String s : tmp){
-            String[] tmpArray = s.split("_");
-            String name = tmpArray[0];
-            int limit = Integer.parseInt(tmpArray[1]);
-            int load = Integer.parseInt(tmpArray[2]);
-            roomList.add(new ChatRoom(name, limit, load));
-        }
+        refreshRoomlist(tmp);
 
         app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
@@ -67,6 +64,8 @@ public class ChatRoomListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Debug.print("refresh room list");
+                requestRoomListUpdate();
+
                 AnimationSet animSet = new AnimationSet(true);
                 animSet.setInterpolator(new DecelerateInterpolator());
                 animSet.setFillAfter(true);
@@ -88,12 +87,27 @@ public class ChatRoomListActivity extends AppCompatActivity {
         mActionBar.setDisplayShowCustomEnabled(true);
     }
 
+    public void refreshRoomlist(ArrayList<String> list){
+        roomList = new ArrayList<>();
+        for(String s : list){
+            String[] tmpArray = s.split("_");
+            String name = tmpArray[0];
+            int limit = Integer.parseInt(tmpArray[1]);
+            int load = Integer.parseInt(tmpArray[2]);
+            roomList.add(new ChatRoom(name, limit, load));
+        }
+    }
+
     @Override
     public void onBackPressed() {
         Debug.print("FINISH CHAT ROOM LIST ACTIVITY");
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    private void requestRoomListUpdate(){
+        mSocket.emit("requestRoomListUpdate");
     }
 
     public ArrayList<ChatRoom> getRoomList() {
