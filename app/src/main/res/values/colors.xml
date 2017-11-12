@@ -3,4 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="white">#ffffff</color>
+
+    <color name="white_dirty_blue">#eaecf2</color>
+
+    <color name="sacramento_state_green">#065143</color>
+    <color name="viridian_green">#129490</color>
+    <color name="iguana_green">#70B77E</color>
+    <color name="tumbleweed">#E0A890</color>
 </resources>
