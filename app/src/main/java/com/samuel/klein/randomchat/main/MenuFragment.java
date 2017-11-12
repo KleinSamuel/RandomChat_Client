@@ -18,7 +18,10 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.samuel.klein.randomchat.R;
 import com.samuel.klein.randomchat.account.ChatApplication;
 import com.samuel.klein.randomchat.account.LoginActivity;
+import com.samuel.klein.randomchat.chat.ChatActivity;
+import com.samuel.klein.randomchat.chat.ChatRoomListActivity;
 import com.samuel.klein.randomchat.debug.Debug;
+import com.samuel.klein.randomchat.settings.AccountSettingsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,11 +33,16 @@ public class MenuFragment extends Fragment {
 
     private static final String TAG = "MenuFragment";
     private static final int REQUEST_LOGIN = 0;
+    private static final int REQUEST_CHAT = 10;
+    private static final int REQUEST_CHATROOM_LIST = 11;
+    private static final int REQUEST_ACCOUNT_SETTINGS = 100;
 
     private MainActivity mainActivity;
     private ChatApplication app;
     private Socket mSocket;
     private String mUsername;
+
+    private boolean inChatroom;
 
     /* ui elements */
     private TextView usernameView;
@@ -51,14 +59,23 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.mainActivity = (MainActivity) getActivity();
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        inChatroom = false;
 
         mainActivity = (MainActivity) getActivity();
         app = mainActivity.getApp();
         mSocket = app.getSocket();
 
         mSocket.on("receiveRoomList", roomListListener);
+        mSocket.on("assignRoom", assignRoomListener);
 
         /* get username from main activity */
         mUsername = mainActivity.getUsername();
@@ -105,14 +122,38 @@ public class MenuFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (Activity.RESULT_OK != resultCode) {
+        /*if (Activity.RESULT_OK != resultCode) {
+            Debug.print("FINISH ACTIVITY!");
             getActivity().finish();
             return;
-        }
-        mUsername = data.getStringExtra("username");
-        mainActivity.storeUsername(mUsername);
+        }*/
 
-        updateContent();
+        switch (requestCode){
+            case REQUEST_LOGIN:
+                Debug.print("Response for login request.");
+                mUsername = data.getStringExtra("username");
+                mainActivity.storeUsername(mUsername);
+                updateContent();
+                app.setUser(mUsername);
+                break;
+
+            case REQUEST_CHAT:
+                Debug.print("Response for request chat.");
+                inChatroom = false;
+                break;
+
+            case REQUEST_CHATROOM_LIST:
+                Debug.print("Response for request chatroom list.");
+                break;
+
+            case REQUEST_ACCOUNT_SETTINGS:
+                Debug.print("Response for account settings request.");
+                boolean logout = Boolean.parseBoolean(data.getStringExtra("logout"));
+                if(logout){
+                    mainActivity.restartApp();
+                }
+                break;
+        }
     }
 
     private void updateContent(){
@@ -124,6 +165,26 @@ public class MenuFragment extends Fragment {
         mUsername = null;
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivityForResult(intent, REQUEST_LOGIN);
+    }
+
+    private void startChatActivity(String roomName, ArrayList<String> userList, String limit){
+        Intent intent = new Intent(mainActivity, ChatActivity.class);
+        intent.putExtra("roomName", roomName);
+        intent.putStringArrayListExtra("userlist", userList);
+        intent.putExtra("limit", limit);
+        inChatroom = true;
+        startActivityForResult(intent, REQUEST_CHAT);
+    }
+
+    private void startChatRoomListActivity(ArrayList<String> list){
+        Intent intent = new Intent(mainActivity, ChatRoomListActivity.class);
+        intent.putExtra("roomList", list);
+        startActivityForResult(intent, REQUEST_CHATROOM_LIST);
+    }
+
+    private void startAccountSettingsActivity(){
+        Intent intent = new Intent(mainActivity, AccountSettingsActivity.class);
+        startActivityForResult(intent, REQUEST_ACCOUNT_SETTINGS);
     }
 
     private void requestRoomList(){
@@ -143,8 +204,44 @@ public class MenuFragment extends Fragment {
                     String load = obj.getString("load");
                     roomList.add(roomName+"_"+limit+"_"+load);
                 }
-                mainActivity.openRoomList(roomList);
+
+                startChatRoomListActivity(roomList);
+
             } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+    };
+
+    Emitter.Listener assignRoomListener = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            try {
+                JSONObject obj = (JSONObject) args[0];
+                String roomName = obj.getString("roomName");
+                String limit = obj.getString("limit");
+                JSONArray array = obj.getJSONArray("userlist");
+
+                ArrayList<String> userList = new ArrayList<>();
+
+                for(int i = 0; i < array.length(); i++){
+                    JSONObject tmp = (JSONObject) array.get(i);
+                    String socketID = tmp.getString("socketID");
+                    String userName = tmp.getString("name");
+                    userList.add(socketID+"_"+userName);
+                }
+
+                Debug.print("Server assigned chatroom to me ["+roomName+"]");
+
+                if(inChatroom){
+                    Debug.print("Already in a chatroom.");
+                    return;
+                }
+
+                //joinChatroom(roomName, userList, limit);
+                startChatActivity(roomName, userList, limit);
+
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
@@ -180,7 +277,8 @@ public class MenuFragment extends Fragment {
     View.OnClickListener accountSettingsButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getContext(), "Coming soon..", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Coming soon..", Toast.LENGTH_SHORT).show();
+            startAccountSettingsActivity();
         }
     };
     View.OnClickListener globalSettingsButtonListener = new View.OnClickListener() {

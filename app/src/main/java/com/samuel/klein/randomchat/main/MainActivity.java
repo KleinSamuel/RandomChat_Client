@@ -13,6 +13,7 @@ import com.samuel.klein.randomchat.account.Constants;
 import com.samuel.klein.randomchat.chat.ChatActivity;
 import com.samuel.klein.randomchat.chat.ChatRoomListActivity;
 import com.samuel.klein.randomchat.debug.Debug;
+import com.samuel.klein.randomchat.settings.AccountSettingsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
         mSocket.on(Socket.EVENT_DISCONNECT, onDisconnectListener);
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onErrorListener);
 
-        mSocket.on("assignRoom", assignRoomListener);
-
-        mSocket.connect();
+        if(!mSocket.connected()){
+            mSocket.connect();
+        }
 
         setContentView(R.layout.activity_main);
     }
@@ -93,23 +94,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void deleteStorageFile() {
+        getApplicationContext().deleteFile(Constants.STORAGE_FILENAME);
+        Debug.print("Storage file deleted.");
+    }
+
+    public void restartApp(){
+        deleteStorageFile();
+        app.reset();
+        mSocket.disconnect();
+        System.exit(0);
+    }
+
     @Override
     public void onBackPressed() {
-        /*new AlertDialog.Builder(this)
-                .setMessage("Are you sure you want to exit?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Debug.print("Yes Pressed!");
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Debug.print("No Pressed!");
-                    }
-                })
-                .show();*/
+        // DO NOT CLOSE APP ON BACK PRESSED
     }
 
     public String getUsername(){
@@ -145,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void joinChatroom(String roomName, ArrayList<String> userList, String limit){
+    /*public void joinChatroom(String roomName, ArrayList<String> userList, String limit){
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra("roomName", roomName);
         intent.putStringArrayListExtra("userlist", userList);
@@ -158,6 +157,11 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("roomList", list);
         startActivity(intent);
     }
+
+    public void openAccountSettngs(){
+        Intent intent = new Intent(this, AccountSettingsActivity.class);
+        startActivity(intent);
+    }*/
 
     Emitter.Listener onConnectListener = new Emitter.Listener() {
         @Override
@@ -177,33 +181,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void call(Object... args) {
             Debug.print("ERROR!");
-        }
-    };
-
-    Emitter.Listener assignRoomListener = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            try {
-                JSONObject obj = (JSONObject) args[0];
-                String roomName = obj.getString("roomName");
-                String limit = obj.getString("limit");
-                JSONArray array = obj.getJSONArray("userlist");
-
-                ArrayList<String> userList = new ArrayList<>();
-
-                for(int i = 0; i < array.length(); i++){
-                    JSONObject tmp = (JSONObject) array.get(i);
-                    String socketID = tmp.getString("socketID");
-                    String userName = tmp.getString("name");
-                    userList.add(socketID+"_"+userName);
-                }
-
-                Debug.print("Server assigned chatroom to me ["+roomName+"]");
-                joinChatroom(roomName, userList, limit);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
     };
 }
