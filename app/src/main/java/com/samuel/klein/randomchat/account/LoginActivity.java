@@ -41,15 +41,12 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(loginListener);
 
-        mSocket.connect();
-
         mSocket.on("loginResponse", onLogin);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSocket.disconnect();
         mSocket.off("loginResponse", onLogin);
     }
 
