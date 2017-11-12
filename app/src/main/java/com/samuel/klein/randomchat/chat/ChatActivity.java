@@ -110,10 +110,16 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        closeAcitivity();
+    }
+
+    private void closeAcitivity(){
         leaveChatroom();
+        Intent intent = new Intent();
+        intent.putExtra("test", "value");
+        setResult(RESULT_OK, intent);
+        finish();
         Debug.print("FINISH CHAT ACTIVITY");
-        this.finish();
     }
 
     public void sendMessage(String message){
