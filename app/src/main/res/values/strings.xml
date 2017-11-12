@@ -14,4 +14,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="your_level">Your Level:</string>
+    <string name="your_coins">Your Coins:</string>
+    <string name="settings">Settings</string>
+    <string name="enter_random_chatroom">Enter random chatroom</string>
+    <string name="enter_public_chatroom">Public chatrooms</string>
+    <string name="create_chatroom">Create chatroom</string>
+    <string name="private_chat">Private chat</string>
+    <string name="account_settings">Account</string>
+    <string name="global_settings">Global</string>
+
 </resources>
