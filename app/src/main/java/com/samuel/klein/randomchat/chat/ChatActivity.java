@@ -10,10 +10,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.socketio.client.Socket;
 import com.samuel.klein.randomchat.R;
@@ -87,7 +89,7 @@ public class ChatActivity extends AppCompatActivity {
                 View popupView = getLayoutInflater().inflate(R.layout.layout_userlist_popup, null);
                 PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-                ArrayList<String> list = new ArrayList<>();
+                final ArrayList<String> list = new ArrayList<>();
                 ListView listView = (ListView) popupView.findViewById(R.id.userlistView);
 
                 for(int i = 0; i < userList.size(); i++) {
@@ -96,6 +98,14 @@ public class ChatActivity extends AppCompatActivity {
 
                 UserlistAdapter adapter = new UserlistAdapter(getBaseContext(), R.layout.layout_userlist_item, list);
                 listView.setAdapter(adapter);
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        //Debug.print("On user in userlist clicked: "+list.get(position));
+                        Toast.makeText(getApplicationContext(), "Coming soon", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
                 popupWindow.setFocusable(true);
                 popupWindow.setBackgroundDrawable(new ColorDrawable());
