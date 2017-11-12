@@ -50,6 +50,13 @@ public class ChatApplication extends Application {
         }
     }
 
+    public void reset(){
+        Debug.print("Restarted ChatApplication");
+        mSocket = null;
+        mUser = null;
+        openSocket();
+    }
+
     public Socket getSocket(){
         return mSocket;
     }
