@@ -90,9 +90,10 @@ public class ChatRoomListActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Debug.print("FINISH CHAT ROOM LIST ACTIVITY");
-        this.finish();
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     public ArrayList<ChatRoom> getRoomList() {
