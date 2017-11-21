@@ -6,8 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.github.nkzawa.socketio.client.Socket;
 import com.samuel.klein.randomchat.R;
+import com.samuel.klein.randomchat.account.ChatApplication;
 
 import java.util.List;
 
@@ -17,9 +20,22 @@ import java.util.List;
 
 public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHolder> {
 
+    private ChatRoomListFragment fragment;
+    private ChatApplication app;
+    private Socket mSocket;
+
     private List<ChatRoom> mRooms;
 
-    public ChatRoomAdapter(Context context, List<ChatRoom> mRooms) {
+    private int selectedRoomPosition;
+
+    public ChatRoomAdapter(Context context, List<ChatRoom> mRooms, ChatRoomListFragment fragment) {
+        this.mRooms = mRooms;
+        this.fragment = fragment;
+        app = (ChatApplication) fragment.getActivity().getApplication();
+        mSocket = app.getSocket();
+    }
+
+    public void updateData(List<ChatRoom> mRooms){
         this.mRooms = mRooms;
     }
 
@@ -30,15 +46,36 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         ChatRoom room = mRooms.get(position);
         viewHolder.setName(room.getName());
-        viewHolder.setLimit(room.getLimit()+"");
+        viewHolder.setLimit(room.getLimit()+"", room.getLoad()+"");
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                enterClickedRoom(position);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return mRooms.size();
+    }
+
+    private void enterClickedRoom(int position){
+        ChatRoom room = mRooms.get(position);
+
+        /* check if room is already full */
+        if(room.getUserlist().size() >= room.getLimit()){
+            Toast toast = Toast.makeText(fragment.getActivity().getApplicationContext(), "This room is full.", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+
+        app.requestChatroom(room.getName());
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -60,11 +97,11 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
             mNameView.setText(name);
         }
 
-        public void setLimit(String limit){
+        public void setLimit(String limit, String load){
             if(mLimitView == null){
                 return;
             }
-            mLimitView.setText(limit);
+            mLimitView.setText(load+"/"+limit);
         }
 
     }

@@ -41,15 +41,12 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(loginListener);
 
-        mSocket.connect();
-
         mSocket.on("loginResponse", onLogin);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSocket.disconnect();
         mSocket.off("loginResponse", onLogin);
     }
 
@@ -125,7 +122,15 @@ public class LoginActivity extends AppCompatActivity {
                 String response = data.getString("response");
                 Debug.print("Login response: "+response);
 
-                switchActivity();
+                if(response.equals("OK")){
+
+                    String level = data.getString("level");
+                    String coins = data.getString("coins");
+                    switchActivity(level, coins);
+
+                }else if(response.equals("NO")){
+                    System.out.println("NO ACCOUNT FOUND!");
+                }
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -136,9 +141,11 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Close login activity
      */
-    private void switchActivity(){
+    private void switchActivity(String level, String coins){
         Intent intent = new Intent();
         intent.putExtra("username", mUsername);
+        intent.putExtra("level", level);
+        intent.putExtra("coins", coins);
         setResult(RESULT_OK, intent);
         finish();
     }

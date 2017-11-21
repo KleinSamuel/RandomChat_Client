@@ -6,6 +6,9 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.samuel.klein.randomchat.debug.Debug;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 
 /**
@@ -36,6 +39,24 @@ public class ChatApplication extends Application {
         }
     }
 
+    public void requestChatroom(String roomName){
+        try {
+            JSONObject object = new JSONObject();
+            object.put("roomName", roomName);
+            object.put("userName", mUser.getName());
+            mSocket.emit("joinRoom", object);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void reset(){
+        Debug.print("Restarted ChatApplication");
+        mSocket = null;
+        mUser = null;
+        openSocket();
+    }
+
     public Socket getSocket(){
         return mSocket;
     }
@@ -44,7 +65,7 @@ public class ChatApplication extends Application {
         return mUser;
     }
 
-    public void setUser(String name) {
-        this.mUser = new User(name);
+    public void setUser(String name, int level, int coins) {
+        this.mUser = new User("", name, level, coins);
     }
 }

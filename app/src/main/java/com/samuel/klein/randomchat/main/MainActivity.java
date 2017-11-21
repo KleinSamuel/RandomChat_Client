@@ -13,7 +13,9 @@ import com.samuel.klein.randomchat.account.Constants;
 import com.samuel.klein.randomchat.chat.ChatActivity;
 import com.samuel.klein.randomchat.chat.ChatRoomListActivity;
 import com.samuel.klein.randomchat.debug.Debug;
+import com.samuel.klein.randomchat.settings.AccountSettingsActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private ChatApplication app;
     private Socket mSocket;
     private String mUsername;
+    private int mLevel;
+    private int mCoins;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,27 +42,28 @@ public class MainActivity extends AppCompatActivity {
         app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
 
-        mUsername = fetchUsername();
+        fetchUserdata();
 
         mSocket.on(Socket.EVENT_CONNECT, onConnectListener);
         mSocket.on(Socket.EVENT_DISCONNECT, onDisconnectListener);
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onErrorListener);
 
-        mSocket.on("assignRoom", assignRoomListener);
-
-        mSocket.connect();
+        if(!mSocket.connected()){
+            mSocket.connect();
+        }
 
         setContentView(R.layout.activity_main);
     }
 
-    private String fetchUsername(){
-        String username = null;
+    private void fetchUserdata(){
         try {
-            username = readStorageFile().replace("username=", "");
+            String[] array = readStorageFile().split("#");
+            mUsername = array[0].replace("username=", "");
+            mLevel = Integer.parseInt(array[1].replace("level=", ""));
+            mCoins = Integer.parseInt(array[2].replace("coins=", ""));
         } catch (Exception e) {
             Debug.print("NO STORAGE FILE FOUND (must be first startup)");
         }
-        return username;
     }
 
     private String readStorageFile() throws Exception {
@@ -79,10 +84,14 @@ public class MainActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    private void createStorageFile(String username){
+    private void createStorageFile(String username, int level, int coins){
         try {
             FileOutputStream fos = openFileOutput(Constants.STORAGE_FILENAME, Context.MODE_PRIVATE);
             fos.write(("username="+username).getBytes());
+            fos.write(("#").getBytes());
+            fos.write(("level="+level).getBytes());
+            fos.write(("#").getBytes());
+            fos.write(("coins="+coins).getBytes());
             fos.close();
             Debug.print("STORAGE FILE CREATED!");
         } catch (FileNotFoundException e) {
@@ -92,41 +101,48 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void deleteStorageFile() {
+        getApplicationContext().deleteFile(Constants.STORAGE_FILENAME);
+        Debug.print("Storage file deleted.");
+    }
+
+    public void restartApp(){
+        deleteStorageFile();
+        app.reset();
+        mSocket.disconnect();
+        System.exit(0);
+    }
+
     @Override
     public void onBackPressed() {
-        /*new AlertDialog.Builder(this)
-                .setMessage("Are you sure you want to exit?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Debug.print("Yes Pressed!");
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Debug.print("No Pressed!");
-                    }
-                })
-                .show();*/
+        // DO NOT CLOSE APP ON BACK PRESSED
     }
 
     public String getUsername(){
         return mUsername;
     }
 
+    public int getLevel(){
+        return mLevel;
+    }
+
+    public int getCoins(){
+        return mCoins;
+    }
+
     public ChatApplication getApp(){
         return app;
     }
 
-    public void storeUsername(String username){
-        createStorageFile(username);
+    public void storeUsername(String username, int level, int coins){
+        createStorageFile(username, level, coins);
     }
 
     public void requestChatroom(String roomName){
         try {
             JSONObject object = new JSONObject();
             object.put("roomName", roomName);
+            object.put("userName", mUsername);
             mSocket.emit("joinRoom", object);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -134,12 +150,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void requestRandomChatroom(){
-        mSocket.emit("joinRandomRoom");
+        try {
+            JSONObject object = new JSONObject();
+            object.put("userName", mUsername);
+            mSocket.emit("joinRandomRoom", object);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void joinChatroom(String roomName){
+    /*public void joinChatroom(String roomName, ArrayList<String> userList, String limit){
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra("roomName", roomName);
+        intent.putStringArrayListExtra("userlist", userList);
+        intent.putExtra("limit", limit);
         startActivity(intent);
     }
 
@@ -148,6 +172,11 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("roomList", list);
         startActivity(intent);
     }
+
+    public void openAccountSettngs(){
+        Intent intent = new Intent(this, AccountSettingsActivity.class);
+        startActivity(intent);
+    }*/
 
     Emitter.Listener onConnectListener = new Emitter.Listener() {
         @Override
@@ -167,20 +196,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void call(Object... args) {
             Debug.print("ERROR!");
-        }
-    };
-
-    Emitter.Listener assignRoomListener = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            try {
-                JSONObject obj = (JSONObject) args[0];
-                String roomName = obj.getString("roomName");
-                Debug.print("Server assigned chatroom to me ["+roomName+"]");
-                joinChatroom(roomName);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
     };
 }

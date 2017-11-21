@@ -6,4 +6,10 @@
     android:layout_height="match_parent"
     tools:context="com.samuel.klein.randomchat.settings.AccountSettingsActivity">
 
+    <fragment
+        android:id="@+id/main_fragment"
+        class="com.samuel.klein.randomchat.settings.AccountSettingsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </FrameLayout>

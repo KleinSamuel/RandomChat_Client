@@ -8,6 +8,8 @@ import com.samuel.klein.randomchat.account.User;
 
 public class Message {
 
+    public static final int NORMAL_MESSAGE = 1;
+
     private User user;
     private String text;
 

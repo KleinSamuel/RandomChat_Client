@@ -132,10 +132,14 @@ public class ChatFragment extends Fragment {
 
     private void addListener(){
         mSocket.on("msg", receiveMessageListener);
+        mSocket.on("userJoinedRoom", userJoinListener);
+        mSocket.on("userLeftRoom", userLeaveListener);
     }
 
     private void removeListener(){
         mSocket.off("msg", receiveMessageListener);
+        mSocket.off("userJoinedRoom", userJoinListener);
+        mSocket.off("userLeftRoom", userLeaveListener);
     }
 
     View.OnClickListener sendButtonListener = new View.OnClickListener() {
@@ -167,12 +171,54 @@ public class ChatFragment extends Fragment {
                     try {
                         JSONObject obj = (JSONObject) args[0];
                         String message = obj.getString("message");
+                        String socketID = obj.getString("socketID");
                         String sender = obj.getString("userName");
 
-                        Debug.print("Received message from ["+sender+"]:\t"+message);
-
-                        Message msg = new Message(new User(sender), message, 1);
+                        Message msg = new Message(new User(socketID, sender, 0, 0), message, 1);
                         addMessage(msg);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+    Emitter.Listener userJoinListener = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            chatActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject obj = (JSONObject) args[0];
+                        String userName = obj.getString("userName");
+                        String socketID = obj.getString("socketID");
+
+                        chatActivity.addUser(userName, socketID);
+
+                        Debug.print("user ["+userName+"] joined the room");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+    Emitter.Listener userLeaveListener = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            chatActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject obj = (JSONObject) args[0];
+                        String userName = obj.getString("userName");
+                        String socketID = obj.getString("socketID");
+
+                        chatActivity.removeUser(userName, socketID);
+
+                        Debug.print("user ["+userName+"] left the room");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

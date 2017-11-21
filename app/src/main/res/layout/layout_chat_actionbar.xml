@@ -17,30 +17,61 @@
     app:contentInsetRight="0dp"
     app:contentInsetEnd="0dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/roomname"
+        <LinearLayout
             android:layout_width="250dp"
             android:layout_height="match_parent"
-            android:gravity="left|center_vertical"
-            android:text="Funny Room"
-            android:textColor="@android:color/background_light"
-            android:textSize="20sp"
-            android:translationX="0dp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/userlist_button"
-            android:layout_width="70dp"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chatroom:"
+                android:textColor="@color/white"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/roomname"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top|left"
+                android:text="Funny Room"
+                android:textColor="@android:color/background_light"
+                android:textSize="20sp"
+                android:translationX="0dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:gravity="center"
-            android:text="1"
-            android:textColor="@android:color/background_light"
-            android:textSize="20sp" />
-    </RelativeLayout>
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="User:"
+                android:textColor="@color/white"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/userlist_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="@android:color/background_light"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </android.support.v7.widget.Toolbar>
